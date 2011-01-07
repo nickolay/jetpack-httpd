@@ -1,0 +1,14 @@
+{
+    "name": "httpd",
+    "license": "MPL 1.1/GPL 2.0/LGPL 2.1",
+    "author": "Nickolay Ponomarev (asqueella@gmail.com, packaging for Jetpack SDK)",
+    "contributors": [
+        "Darin Fisher",
+        "Christian Biesinger",
+        "Jeff Walden",
+        "Robert Sayre"
+    ],
+    "version": "http://hg.mozilla.org/mozilla-central/file/0165ef8efe98/netwerk/test/httpserver/httpd.js", 
+    "fullName": "HTTP server in JavaScript.", 
+    "id": "jid0-P9iHiSnCDLWGbF8BQRyB4m1WTH0"
+}

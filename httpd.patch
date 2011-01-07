@@ -1,0 +1,90 @@
+--- httpd.js.upstream	2010-12-30 18:48:52.000000000 +0300
++++ lib/httpd.js	2011-01-08 01:28:39.000000000 +0300
+@@ -48,9 +48,7 @@
+ 
+-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+ 
+-const Cc = Components.classes;
+-const Ci = Components.interfaces;
+-const Cr = Components.results;
+-const Cu = Components.utils;
+-const CC = Components.Constructor;
++var {components,Cc,Ci,Cr,Cu} = require("chrome");
++components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
++
++const CC = components.Constructor;
+ 
+@@ -59,3 +57,3 @@
+ /** True if debugging output is enabled, false otherwise. */
+-var DEBUG = false; // non-const *only* so tweakable in server tests
++var DEBUG = true; // non-const *only* so tweakable in server tests
+ 
+@@ -64,3 +62,3 @@
+ 
+-var gGlobalObject = this;
++var gGlobalObject = Cc["@mozilla.org/systemprincipal;1"].createInstance();
+ 
+@@ -226,3 +224,3 @@
+  * speedup over doing the same from base principles.  See the docs at
+- * http://developer.mozilla.org/en/docs/Components.Constructor for details.
++ * http://developer.mozilla.org/en/docs/components.Constructor for details.
+  */
+@@ -404,3 +402,3 @@
+ {
+-  classID: Components.ID("{54ef6f81-30af-4b1d-ac55-8ba811293e41}"),
++  classID: components.ID("{54ef6f81-30af-4b1d-ac55-8ba811293e41}"),
+ 
+@@ -1959,3 +1957,4 @@
+ 
+-  var directory = metadata.getProperty("directory");
++  var directory = metadata.getProperty("directory").QueryInterface(Ci.nsILocalFile);
++  console.log(directory)
+   NS_ASSERT(directory && directory.isDirectory());
+@@ -2471,2 +2470,3 @@
+         metadata._ensurePropertyBag();
++        console.log("settinh"+file.parent)
+         metadata._bag.setPropertyAsInterface("directory", file.parent);
+@@ -3909,3 +3909,3 @@
+ 
+-          if (!Components.isSuccessCode(statusCode))
++          if (!components.isSuccessCode(statusCode))
+           {
+@@ -3978,3 +3978,3 @@
+           {
+-            if (!Components.isSuccessCode(statusCode))
++            if (!components.isSuccessCode(statusCode))
+               dumpn("*** WARNING: non-success statusCode in onStopRequest");
+@@ -5120,4 +5120,8 @@
+ // XPCOM trappings
++if ("XPCOMUtils" in this && // Firefox 3.6 doesn't load XPCOMUtils in this scope for some reason...
++    "generateNSGetFactory" in XPCOMUtils) {
++  var NSGetFactory = XPCOMUtils.generateNSGetFactory([nsHttpServer]);
++}
++
+ 
+-var NSGetFactory = XPCOMUtils.generateNSGetFactory([nsHttpServer]);
+ 
+@@ -5179 +5183,23 @@
+ }
++
++function startServerAsync(port, basePath)
++{
++  if (basePath)
++  {
++    var lp = Cc["@mozilla.org/file/local;1"]
++               .createInstance(Ci.nsILocalFile);
++    lp.initWithPath(basePath);
++  }
++
++  var srv = new nsHttpServer();
++  if (lp)
++    srv.registerDirectory("/", lp);
++  srv.registerContentType("sjs", "sjs");
++  srv.identity.setPrimary("http", "localhost", port);
++  srv.start(port);
++  return srv;
++}
++
++exports.nsHttpServer = nsHttpServer;
++exports.server = server;
++exports.startServerAsync = startServerAsync;
