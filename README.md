@@ -9,6 +9,11 @@ The most basic usage is:
       })
     });
 
+This starts a server in background (assuming you're running this code in an application that has
+an event loop, such as Firefox). The server listens at http://localhost:port/ and serves files
+from the specified directory. You can serve static content or use SJS scripts, as described in
+documentation on developer.mozilla.org.
+
 You can also use `nsHttpServer` to start the server manually:
 
     var {nsHttpServer} = require("httpd");

@@ -1,5 +1,5 @@
---- httpd.js.upstream	2010-12-30 18:48:52.000000000 +0300
-+++ lib/httpd.js	2011-01-08 01:28:39.000000000 +0300
+--- httpd.js.upstream	2011-01-08 03:15:04.000000000 +0300
++++ lib/httpd.js	2011-01-08 03:48:45.000000000 +0300
 @@ -48,9 +48,7 @@
  
 -Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -34,27 +34,26 @@
 -  classID: Components.ID("{54ef6f81-30af-4b1d-ac55-8ba811293e41}"),
 +  classID: components.ID("{54ef6f81-30af-4b1d-ac55-8ba811293e41}"),
  
-@@ -1959,3 +1957,4 @@
+@@ -1959,3 +1957,3 @@
  
 -  var directory = metadata.getProperty("directory");
 +  var directory = metadata.getProperty("directory").QueryInterface(Ci.nsILocalFile);
-+  console.log(directory)
    NS_ASSERT(directory && directory.isDirectory());
-@@ -2471,2 +2470,3 @@
+@@ -2471,2 +2469,3 @@
          metadata._ensurePropertyBag();
 +        console.log("settinh"+file.parent)
          metadata._bag.setPropertyAsInterface("directory", file.parent);
-@@ -3909,3 +3909,3 @@
+@@ -3909,3 +3908,3 @@
  
 -          if (!Components.isSuccessCode(statusCode))
 +          if (!components.isSuccessCode(statusCode))
            {
-@@ -3978,3 +3978,3 @@
+@@ -3978,3 +3977,3 @@
            {
 -            if (!Components.isSuccessCode(statusCode))
 +            if (!components.isSuccessCode(statusCode))
                dumpn("*** WARNING: non-success statusCode in onStopRequest");
-@@ -5120,4 +5120,8 @@
+@@ -5120,4 +5119,8 @@
  // XPCOM trappings
 +if ("XPCOMUtils" in this && // Firefox 3.6 doesn't load XPCOMUtils in this scope for some reason...
 +    "generateNSGetFactory" in XPCOMUtils) {
@@ -64,7 +63,7 @@
  
 -var NSGetFactory = XPCOMUtils.generateNSGetFactory([nsHttpServer]);
  
-@@ -5179 +5183,23 @@
+@@ -5179 +5182,23 @@
  }
 +
 +function startServerAsync(port, basePath)
